@@ -1,0 +1,657 @@
+<html style="overflow: hidden">
+<head>
+
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
+    
+    <script type="text/javascript" src="three.js"></script>
+    <script type="text/javascript" src="OrbitControls.js"></script>
+    <script type="text/javascript" src="WebGL.js"></script>
+    <script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+</head>
+
+<style>
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+body{
+background-image:url("cloud.jpg");
+  font-family: 'Open Sans', sans-serif;
+  background-size:cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    width: 100%;
+	height: 100%;
+	color: rgba(0, 0, 0, 0.982);
+	background-size: 200% 200%;
+	-webkit-animation: Gradient 90s ease infinite;
+	-moz-animation: Gradient 90s ease infinite;
+	animation: Gradient 90s ease infinite;
+  overflow: hidden
+}
+
+
+
+/* 
+body {
+	width: 100%;
+	height: 100%;
+	color: rgba(0, 0, 0, 0.982);
+	background: linear-gradient(35deg,  rgb(23, 6, 43),rgb(5, 24, 20),rgb(6, 6, 43),rgb(8, 6, 43),rgb(6, 26, 43),rgb(23, 6, 43),rgb(5, 24, 20),rgb(6, 6, 43),rgb(8, 6, 43),rgb(6, 26, 43),rgb(23, 6, 43),rgb(5, 24, 20),rgb(6, 6, 43),rgb(8, 6, 43),rgb(6, 26, 43));
+	background-size: 400% 400%;
+	-webkit-animation: Gradient 45s ease infinite;
+	-moz-animation: Gradient 45s ease infinite;
+	animation: Gradient 45s ease infinite;
+} */
+
+@-webkit-keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+}
+
+@-moz-keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+}
+
+@keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
+}
+
+.search {
+  width: 450%;
+  position: relative;
+  display: flex;
+}
+
+.searchTerm {
+  width: 400%;
+  border: 3px solid rgb(30, 128, 213);
+  border-right: none;
+  padding: 5px;
+  height: 36px;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+  color: #9DBFAF;
+}
+
+.searchTerm:focus{
+  color: #1e80d5;
+}
+
+.searchButton {
+  width: 40px;
+  height: 36px;
+  border: 1px solid #1e80d5;
+  background: #1e80d5;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/*Resize the wrap to see the search bar change!*/
+.wrap{
+  width: 100%;
+  position: absolute;
+  top: 76%;
+  left: 50%;
+  background-color: rgba(255, 255, 255, 0);
+  transform: translate(-50%, -50%);
+  -webkit-animation: fadein 4s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadein 4s; /* Firefox < 16 */
+        -ms-animation: fadein 4s; /* Internet Explorer */
+         -o-animation: fadein 4s; /* Opera < 12.1 */
+            animation: fadein 4s;
+}
+
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Firefox < 16 */
+@-moz-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Internet Explorer */
+@-ms-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Opera < 12.1 */
+@-o-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+
+.card {
+  margin: 10px 10px;
+}
+
+/* Flip Cards CSS */
+.card-container {
+  display: grid;
+  perspective: 700px;
+}
+
+.card-flip {
+  display: grid;
+  grid-template: 1fr / 1fr;
+  grid-template-areas: "frontAndBack";
+  transform-style: preserve-3d;
+  transition: all 0.7s ease;
+}
+
+.card-flip div {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.front {
+  grid-area: frontAndBack;
+}
+
+.back {
+  grid-area: frontAndBack;
+  transform: rotateY(-180deg);
+}
+
+.card-container:hover .card-flip {
+  transform: rotateY(180deg);
+}
+
+.col-md-4 {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 37.333333%;
+    -ms-flex: 0 0 37.333333%;
+    flex: 0 0 37.333333%;
+    max-width: 37.333333%;
+    /* background-color: rgba(255, 255, 255, 0.769) */
+    /* max-height: 45%; */
+}
+</style>
+
+
+
+<div style="background-color: white; border-radius:12px">
+<div id="wrap" class="wrap">
+    <div id="logos" style=" margin: auto; position: relative; top: -50%;" ><span style="position: relative; left: 41%; "><img src="Photos/HeartIcon.png" style="height:100px; width:110px; top: -21px; margin-bottom: -80%; position: relative; left: -130px;"><h1 style="font-size: 40px; color:white">AxmFitness</h1><p style="position: relative; top: -15px; width: 500px; color: yellowgreen">Measure twice, live once - Track your health for free</p></span></div>
+        <div id="searchcontainer" class="search" style="position: relative; margin:auto; width:45%; margin-bottom: 50px;">
+           <input id="SearchQuery" type="text" class="searchTerm" style="text-align: center; font-size: 16px; " placeholder="Search for food to start your caloric analysis">
+           <button id="SubmitButton" type="submit" class="searchButton">
+             <i class="fa fa-search"></i>
+          </button>
+        </div>
+     </div>
+    </div>
+
+<div id="ResultBox" style="    
+background-color: rgba(250, 250, 250, 0.75);
+max-width: 55%;
+max-height: 100%;
+overflow-y: scroll;
+width: 100%;
+height: 75%;
+top: 100px;
+border-radius: 12px;
+position: relative;
+margin-right: 5%;
+display: none;
+float:right;"
+
+
+>
+
+</div>
+
+
+    <!-- Card 3 -->
+    <div class="col-md-4 card-container">
+            <div class="card-flip">
+              <!-- Card 3 Front -->
+              <div class="card front">
+                <img src="CalBox.png" class="card-img-top img-fluid">
+                <div class="card-block">
+                  <h4 class="card-title">Front Card Title</h4>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Cras justo odio</li>
+                  <li class="list-group-item">Dapibus ac facilisis in</li>
+                  <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+                <div class="card-block">
+                  <p class="card-text">Some more text</p>
+                </div>
+              </div>
+              <!-- End Card 3 Front -->
+      
+              <!-- Card 3 Back -->
+              <div class="card back text-center">
+                <div class="card-header">
+                  Featured
+                </div>
+                <div class="card-block">
+                  <h4 class="card-title">Special title treatment</h4>
+                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="card-footer text-muted">
+                  2 days ago
+                </div>
+              </div>
+              <!-- End Card 3 Back -->
+            </div>
+          </div>
+          <!-- End Card 3 -->
+
+
+<script>
+HEIGHT = window.innerHeight;
+WIDTH = window.innerWidth;
+Queries = [];
+QueryCounter = 0;
+ResultBox = document.getElementById('ResultBox')
+
+
+function CreateBox(obj){
+    var A = `    <!-- Card 3 -->
+    <div class="col-md-4 card-container">
+            <div class="card-flip">
+              <!-- Card 3 Front -->
+              <div class="card front">
+                <img src="http://www.usa-essays.com/blog/wp-content/uploads/2017/09/sample-5-1024x768.jpg" class="card-img-top img-fluid">
+                <div class="card-block">
+                  <h4 class="card-title">Front Card Title</h4>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Cras justo odio</li>
+                  <li class="list-group-item">Dapibus ac facilisis in</li>
+                  <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+                <div class="card-block">
+                  <p class="card-text">Some more text</p>
+                </div>
+              </div>
+              <!-- End Card 3 Front -->
+      
+              <!-- Card 3 Back -->
+              <div class="card back text-center">
+                <div class="card-header">
+                  Featured
+                </div>
+                <div class="card-block">
+                  <h4 class="card-title">Special title treatment</h4>
+                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="card-footer text-muted">
+                  2 days ago
+                </div>
+              </div>
+              <!-- End Card 3 Back -->
+            </div>
+          </div>
+          <!-- End Card 3 -->`
+
+          for (i=0;i<obj.length;i++){
+              console.log('checking for THIS')
+            var newCard = document.createElement('div')
+            newCard.innerHTML=`    <!-- Card 3 -->
+    <div class="col-md-4 card-container">*
+            <div class="card-flip">*
+              <!-- Card 3 Front -->
+              <div class="card front">
+                <img src="http://www.usa-essays.com/blog/wp-content/uploads/2017/09/sample-5-1024x768.jpg" class="card-img-top img-fluid">
+                <div class="card-block">
+                  <h4 class="card-title">${obj[0][i]}</h4>
+                  <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">Cras justo odio</li>
+                  <li class="list-group-item">Dapibus ac facilisis in</li>
+                  <li class="list-group-item">Vestibulum at eros</li>
+                </ul>
+                <div class="card-block">
+                  <p class="card-text">Some more text</p>
+                </div>
+              </div>
+              <!-- End Card 3 Front -->
+      
+              <!-- Card 3 Back -->
+              <div class="card back text-center">
+                <div class="card-header">
+                  Featured
+                </div>
+                <div class="card-block">
+                  <h4 class="card-title">Special title treatment</h4>
+                  <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                  <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+                <div class="card-footer text-muted">
+                  2 days ago
+                </div>
+              </div>
+              <!-- End Card 3 Back -->
+            </div>
+          </div>
+          <!-- End Card 3 -->`
+
+          document.body.appendChild(newCard)
+          }
+}
+
+
+
+
+
+$('.wrap').animate({
+      left: '65%',
+      top:'50%'
+    }, 500);
+
+
+document.getElementById('SubmitButton').addEventListener('click', function(){
+    Search()
+});
+
+// function name(parameters){
+//   statements
+// }
+function Search(){
+document.getElementById('searchcontainer').style.marginTop='60px';
+$('#logos').fadeOut('slow');
+$('.wrap').animate({
+      top: '60px'
+    }, 500);
+
+
+//var xhr = new XMLHttpRequest();
+var SearchText = document.getElementById('SearchQuery').value;
+var data = null;
+var xhr = new XMLHttpRequest();
+
+// xhr.addEventListener("readystatechange", function () {
+//   if (this.readyState === 4) {
+//     console.log(this.responseText);
+//     Queries.push(this.responseText)
+//   }
+// });
+
+
+// xhr.open("GET", "http://127.0.0.1:5000/query?id="+SearchText);
+// xhr.setRequestHeader("Accept", "*/*");
+// xhr.setRequestHeader("Cache-Control", "no-cache");
+// xhr.withCredentials = false 
+// xhr.send(data);
+
+
+
+var data = null;
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === 4) {
+    console.log(this.responseText);
+
+console.log('Now sending off your data')
+var data=this.responseText;
+Queries.push(data);
+document.getElementById('ResultBox').innerHTML=''
+
+
+//console.log(data)
+console.log('anything?')
+
+var Jresp = JSON.parse(data);
+console.log(Jresp)
+var size = Object.size(Jresp[0]);
+
+
+//console.log(Jresp)
+console.log(size)
+//document.getElementById('ResultBox').style.display='block';
+$("#ResultBox").fadeIn(2000);
+// console.log(Jresp[0][0])
+// var ResultBox = document.createElement('div')
+// ResultBox.style.backgroundColor='rgb(250,250,250,.8)'
+// ResultBox.style.maxWidth = '75%'
+// ResultBox.style.maxHeight= '100%'
+// ResultBox.style.overflowY = 'scroll'
+// ResultBox.style.width = '100%'
+// ResultBox.style.height = '60%'
+// ResultBox.style.top = '100px'
+// ResultBox.style.borderRadius = '12px'
+// ResultBox.style.id = 'ResultBox'
+// ResultBox.style.position = 'relative'
+// ResultBox.style.margin = 'auto'
+// // ResultBox.style.id = 'ResultBox'
+
+// document.body.appendChild(ResultBox);
+
+
+for (i=0; i < size; i++){
+    
+    console.log(Jresp[0][i])
+    var text = Jresp[0][i]
+    
+    var A = document.createElement('div')
+    var B = document.createTextNode(i)
+    A.appendChild(B)
+    
+
+    var ItemBox = document.createElement('div')
+    ItemBox.style.backgroundColor='rgb(250,250,250,.8)'
+    ItemBox.style.maxWidth = '95%'
+    ItemBox.style.maxHeight= '100%'
+    ItemBox.style.overflowY = 'scroll'
+    ItemBox.style.width = '92%'
+    ItemBox.style.height = '30%'
+    ItemBox.style.top = '8%'
+    ItemBox.style.borderRadius = '12px'
+    ItemBox.style.id = 'ItemBox'
+    ItemBox.style.position = 'relative'
+    ItemBox.style.margin = 'auto'
+    ItemBox.style.marginBottom = '1%'
+
+
+
+    document.getElementById('ResultBox').appendChild(ItemBox)
+
+
+
+var ItemTitle = document.createElement('div')
+ItemTitle.style.maxWidth = '35%'
+ItemTitle.style.maxHeight= '10%'
+ItemTitle.style.width = '35%'
+ItemTitle.style.height = '10%'
+ItemTitle.style.top = '7%'
+ItemTitle.style.left = '3%'
+ItemTitle.style.position = 'relative'
+ItemTitle.style.color = 'rgb(30, 128, 213)'
+ItemTitle.style.fontSize = '18px'
+ItemTitle.style.fontWeight = 'bold'
+ItemTitle.style.position = 'relative'
+ItemTitleText = document.createTextNode(Jresp[0][i])
+ItemTitle.appendChild(ItemTitleText)
+ItemBox.appendChild(ItemTitle)
+
+
+
+
+var ItemPortion = document.createElement('div')
+ItemPortion.style.maxWidth = '65%'
+ItemPortion.style.maxHeight= '10%'
+ItemPortion.style.width = '65%'
+ItemPortion.style.height = '10%'
+ItemPortion.style.top = '27%'
+ItemPortion.style.left = '3%'
+ItemPortion.style.position = 'relative'
+ItemPortion.style.color = 'rgb(0, 16, 103)'
+ItemPortion.style.fontSize = '14px'
+ItemPortion.style.fontWeight = 'bold'
+ItemPortion.style.position = 'relative'
+ItemPortionText = document.createTextNode('Recommended Portion Size - '+Jresp[1][i])
+ItemPortion.appendChild(ItemPortionText)
+ItemBox.appendChild(ItemPortion)
+
+
+var ItemCalories = document.createElement('div')
+ItemCalories.style.maxWidth = '35%'
+ItemCalories.style.maxHeight= '10%'
+ItemCalories.style.width = '35%'
+ItemCalories.style.height = '10%'
+ItemCalories.style.top = '27%'
+ItemCalories.style.left = '3%'
+ItemCalories.style.position = 'relative'
+ItemCalories.style.color = 'rgb(0, 16, 103)'
+ItemCalories.style.fontSize = '14px'
+ItemCalories.style.fontWeight = 'bold'
+ItemCalories.style.position = 'relative'
+ItemCalories.style.textAlign = 'center'
+ItemCaloriesText = document.createTextNode(Jresp[2][i])
+ItemCalories.appendChild(ItemCaloriesText)
+//ItemCalories.appendChild(ItemCaloriesTextTitle)
+ItemBox.appendChild(ItemCalories)
+
+
+
+
+
+var ItemCaloriesTextTitle = document.createElement('div')
+ItemCaloriesTextTitle.style.maxWidth = '35%'
+ItemCaloriesTextTitle.style.maxHeight= '10%'
+ItemCaloriesTextTitle.style.width = '35%'
+ItemCaloriesTextTitle.style.height = '10%'
+ItemCaloriesTextTitle.style.top = '37%'
+ItemCaloriesTextTitle.style.left = '33%'
+ItemCaloriesTextTitle.style.position = 'relative'
+ItemCaloriesTextTitle.style.color = 'rgb(0, 16, 103)'
+ItemCaloriesTextTitle.style.fontSize = '22px'
+ItemCaloriesTextTitle.style.fontWeight = 'bolder'
+ItemCaloriesTextTitle.style.position = 'relative'
+ItemCaloriesTextTitle.style.textAlign = 'center'
+ItemCaloriesTextTitleText = document.createTextNode("CALORIES")
+ItemCaloriesTextTitle.appendChild(ItemCaloriesTextTitleText)
+ItemBox.appendChild(ItemCaloriesTextTitle)
+//ItemBox.appendChild(ItemCaloriesTextTitle)
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+console.log('Query Counter --  BEFORE  --  '+QueryCounter)
+QueryCounter += 1
+console.log('Query Counter --  AFTER  --  '+QueryCounter)
+
+
+  }
+});
+
+qbit = "http://127.0.0.1:5000/query?id="+SearchText;
+xhr.open("GET", qbit);
+
+xhr.setRequestHeader("Accept", "*/*");
+xhr.setRequestHeader("Cache-Control", "no-cache");
+xhr.withCredentials = false
+
+xhr.setRequestHeader("cache-control", "no-cache");
+
+xhr.send(data);
+
+
+
+
+// Object Length function
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        //console.log(key)   //This is the number of items
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
+// Get the size of an object
+//var size = Object.size(jResp);
+
+}
+
+
+
+
+
+
+//)
+
+
+
+</script>
+
+
+<script>
+
+</script>
+</html>
